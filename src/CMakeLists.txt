@@ -208,6 +208,12 @@ if(CASS_BUILD_STATIC)
   if(ZLIB_LIBRARY_NAME)
     add_dependencies(cassandra_static ${ZLIB_LIBRARY_NAME})
   endif()
+
+  # Export properly.
+  add_library(cassandra_static_int INTERFACE)
+  target_link_libraries(cassandra_static_int INTERFACE cassandra_static)
+  add_library(cassandra::cassandra_static ALIAS cassandra_static_int)
+
 endif()
 
 #-------------------------------------
