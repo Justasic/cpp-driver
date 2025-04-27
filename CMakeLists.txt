@@ -46,6 +46,7 @@ option(CASS_USE_STATIC_LIBS "Link static libraries when building executables" OF
 option(CASS_USE_STD_ATOMIC "Use std::atomic library" ON)
 option(CASS_USE_ZLIB "Use zlib" ON)
 option(CASS_USE_TIMERFD "Use timerfd (Linux only)" ON)
+option(CASS_ENABLE_WERROR "Enable -Werror compiler option" OFF)
 
 set(CASS_CPP_STANDARD "11" CACHE STRING "C++ standard (11, 14, 17, etc.)")
 
@@ -173,25 +174,28 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
   # OpenSSL is deprecated on later versions of Mac OS X. The long-term solution
   # is to provide a CommonCryto implementation.
   if (APPLE AND CASS_USE_OPENSSL)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations")
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-deprecated-declarations")
   endif()
 
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
      "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     # Clang/Intel specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros -Wno-zero-length-array")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef -Wno-unknown-warning-option")
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter")
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-variadic-macros -Wno-zero-length-array")
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-unused-local-typedef -Wno-unknown-warning-option")
   else()
     # GCC specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter -Wno-variadic-macros")
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter -Wno-variadic-macros")
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8" OR
         CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.8")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedefs")
+      set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-unused-local-typedefs")
     endif()
+  endif()
+  if(CASS_ENABLE_WERROR)
+    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Werror")
   endif()
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   add_definitions(/we4800)
@@ -218,6 +222,8 @@ elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
 else()
   message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CASS_COMMON_CXX_FLAGS}")
 
 #------------------------
 # Subdirectories
