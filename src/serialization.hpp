@@ -219,7 +219,7 @@ inline const char* decode_uuid(const char* input, CassUuid* output) {
 inline int64_t decode_zig_zag(uint64_t n) {
   // n is an unsigned long because we want a logical shift right
   // (it should 0-fill high order bits), not arithmetic shift right.
-  return (n >> 1) ^ -static_cast<int64_t>(n & 1);
+  return static_cast<int64_t>(n >> 1) ^ (-static_cast<int64_t>(n & 1));
 }
 
 inline uint64_t encode_zig_zag(int64_t n) { return (n << 1) ^ (n >> 63); }
