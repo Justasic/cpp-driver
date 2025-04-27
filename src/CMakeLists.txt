@@ -80,13 +80,19 @@ endif()
 
 # Add compiler-specific flags
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-  set(CASS_DRIVER_CXX_FLAGS "${CASS_DRIVER_CXX_FLAGS} -Wconversion -Wno-sign-conversion -Wno-shorten-64-to-32 -Wno-undefined-var-template -Wno-implicit-int-float-conversion")
+  list(APPEND CASS_DRIVER_CXX_FLAGS
+    -Wconversion
+    -Wno-sign-conversion
+    -Wno-shorten-64-to-32
+    -Wno-undefined-var-template
+    -Wno-implicit-int-float-conversion
+  )
   if(CASS_ENABLE_WERROR)
-    set(CASS_DRIVER_CXX_FLAGS "${CASS_DRIVER_CXX_FLAGS} -Werror")
+    list(APPEND CASS_DRIVER_CXX_FLAGS -Werror)
   endif()
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU") # To many superfluous warnings generated with GCC when using -Wconversion (see: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=40752)
   if(CASS_ENABLE_WERROR)
-    set(CASS_DRIVER_CXX_FLAGS "${CASS_DRIVER_CXX_FLAGS} -Werror")
+    list(APPEND CASS_DRIVER_CXX_FLAGS -Werror)
   endif()
 endif()
 

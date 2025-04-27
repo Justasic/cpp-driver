@@ -174,28 +174,43 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
   # OpenSSL is deprecated on later versions of Mac OS X. The long-term solution
   # is to provide a CommonCryto implementation.
   if (APPLE AND CASS_USE_OPENSSL)
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-deprecated-declarations")
+    list(APPEND CASS_COMMON_CXX_FLAGS -Wno-deprecated-declarations)
   endif()
 
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
      "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     # Clang/Intel specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter")
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-variadic-macros -Wno-zero-length-array")
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-unused-local-typedef -Wno-unknown-warning-option")
+    list(APPEND CASS_COMMON_CXX_FLAGS
+      -Wall
+      -pedantic
+      -Wextra
+      -Wno-long-long
+      -Wno-unused-parameter
+      -Wno-variadic-macros
+      -Wno-zero-length-array
+      -Wno-unused-local-typedef
+      -Wno-unknown-warning-option
+    )
   else()
     # GCC specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter -Wno-variadic-macros")
+    list(APPEND CASS_COMMON_CXX_FLAGS
+      -Wall
+      -pedantic
+      -Wextra
+      -Wno-long-long
+      -Wno-unused-parameter
+      -Wno-variadic-macros
+    )
 
     if(CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL "4.8" OR
         CMAKE_CXX_COMPILER_VERSION VERSION_GREATER "4.8")
-      set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Wno-unused-local-typedefs")
+      list(APPEND CASS_COMMON_CXX_FLAGS -Wno-unused-local-typedefs)
     endif()
   endif()
   if(CASS_ENABLE_WERROR)
-    set(CASS_COMMON_CXX_FLAGS "${CASS_COMMON_CXX_FLAGS} -Werror")
+    list(APPEND CASS_COMMON_CXX_FLAGS -Werror)
   endif()
 elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   add_definitions(/we4800)
@@ -223,7 +238,9 @@ else()
   message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
 endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CASS_COMMON_CXX_FLAGS}")
+# Instead of modifying CMAKE_CXX_FLAGS directly, we'll use target_compile_options in the subdirectories
+# This allows better control when used as a subproject
+add_compile_options(${CASS_COMMON_CXX_FLAGS})
 
 #------------------------
 # Subdirectories
