@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.20)
 
 include(CheckCXXSourceCompiles)
 include(CheckFunctionExists)
@@ -111,13 +111,13 @@ configure_file("config.h.cmake" "${CMAKE_CURRENT_SOURCE_DIR}/src/sparsehash/inte
 file(GLOB SPARSEHASH_HEADER_FILES sparsehash)
 file(GLOB SPARSEHASH_INTERNAL_HEADER_FILES sparsehash/*.h sparsehash/internal/*.h)
 
-set(SOURCES 
-  ${SPARSEHASH_HEADER_FILES} 
+set(SOURCES
+  ${SPARSEHASH_HEADER_FILES}
   ${SPARSEHASH_INTERNAL_HEADER_FILES})
 
 source_group("Header Files\\" FILES ${SPARSEHASH_HEADER_FILES})
 source_group("Header Files\\internal" FILES ${SPARSEHASH_INTERNAL_HEADER_FILES})
 
 add_custom_target(sparsehash ${SOURCES})
-set_target_properties(sparsehash PROPERTIES 
+set_target_properties(sparsehash PROPERTIES
   FOLDER "Driver/Dependencies")

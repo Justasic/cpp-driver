@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.20)
 project(scylla-cpp C CXX)
 
 set(CASS_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR})
@@ -136,7 +136,7 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
       set(CASS_USE_STD_ATOMIC ON)
     endif()
   endif()
-elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR 
+elseif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
        "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
   # Version determined from: http://clang.llvm.org/cxx_status.html
   # 3.2 includes the full C++11 memory model, but 3.1 had atomic
@@ -177,13 +177,13 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
   endif()
 
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR
-     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang") 
+     "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
     # Clang/Intel specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-variadic-macros -Wno-zero-length-array")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-local-typedef -Wno-unknown-warning-option")
-  else() 
+  else()
     # GCC specific compiler options
     # I disabled long-long warning because boost generates about 50 such warnings
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra -Wno-long-long -Wno-unused-parameter -Wno-variadic-macros")
